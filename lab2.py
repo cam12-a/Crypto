@@ -1,4 +1,5 @@
 import re
+import io
 class lab2:
     openText=""
     data=""
@@ -7,7 +8,7 @@ class lab2:
     for i in range(len(alphabet)):
         matrixAlphabet[i]=[chr(j) for j in range(ord('А'), ord('Я')+1)]
     def __init__ (self,fileName):
-        with open(fileName, 'r') as file:
+        with open(fileName, 'r',encoding='UTF-8') as file:
             self.openText = file.read().replace('\n', '')
         self.openText=self.openText.upper()
         self.openText = re.sub(r'[^\w\s]', '', self.openText)
