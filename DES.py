@@ -1,6 +1,7 @@
 from io import open
 from re import sub
 import binascii
+from random import randint
 class DES:
 
     def __init__(self,fileName):
@@ -29,12 +30,30 @@ class DES:
 
 
     def generateKey(self):
-        return [[]]
+        alphabet=[chr(i) for i in range(ord('а'),ord('я')+1)]
+        key=""
+        KEY=""
+        for i in range(256):
+            j=randint(0,i)
+            key+=alphabet[j%32]
+        key=[key[i:i+32] for i in range(0,len(key),32)]
+        KEY=[self.str2hex(key[i]).decode("UTF-8") for i in range(len(key))]
+        print(KEY,len(KEY[0]))
+        return key
 
     def functionValue(self,LeftSide,Key):
-        return LeftSide
-        
+        return LeftSide^Key
 
+    def encodeText(self,LeftSide,key):
+        RightSide=[]
+        RightSide[0]=LeftSide[0]
+        for j in range(len(key)):
+            for i in range(1,len(LeftSide),1):
+                RightSide[i]=LeftSide[i]
+                LeftSide[i]=RightSide[i]^self.functionValue(LeftSide[i],key[j])
+        return [RightSide,LeftSide]
+    def SBlock(self):
+        pass
 
     def str2hex(self,s):
         return binascii.hexlify(bytes(str.encode(s)))
@@ -48,14 +67,10 @@ textToBlock64=Des.openTextToBlock64()
 print(len(textToBlock64))
 print(len(Des.str2hex(textToBlock64[0]).decode("UTF-8")))
 aa=Des.Block64ToTwoBlockOf32(textToBlock64[0])
-'''print(aa)
 
-print(Des.str2hex(aa[0]))
-print(Des.str2hex(aa[1]))'''
 aa=Des.AllBlock64To32Blocks()
 print("dsf",len(aa))
 print(Des.hex2str(aa[0][0]).decode("UTF-8"))
 print(Des.hex2str(aa[0][1]).decode("UTF-8"))
-
-print(len(Des.hex2str(aa[0][0]).decode("UTF-8")))
 print(len(Des.hex2str(aa[0][1]).decode("UTF-8")))
+print(Des.generateKey())
