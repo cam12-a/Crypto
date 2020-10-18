@@ -38,20 +38,23 @@ class DES:
             key+=alphabet[j%32]
         key=[key[i:i+32] for i in range(0,len(key),32)]
         KEY=[self.str2hex(key[i]).decode("UTF-8") for i in range(len(key))]
-        print(KEY,len(KEY[0]))
-        return key
+        #print(KEY,len(KEY[0]))
+        return [KEY,key]
 
     def functionValue(self,LeftSide,Key):
         return LeftSide^Key
 
-    def encodeText(self,LeftSide,key):
-        RightSide=[]
-        RightSide[0]=LeftSide[0]
+    def roundText(self,LeftSide,key):
+        RightSide=""
         for j in range(len(key)):
-            for i in range(1,len(LeftSide),1):
-                RightSide[i]=LeftSide[i]
-                LeftSide[i]=RightSide[i]^self.functionValue(LeftSide[i],key[j])
-        return [RightSide,LeftSide]
+            k=1
+            while k<=32:
+                for i in range(1,len(LeftSide),1):
+                    RightSide=LeftSide
+                    LeftSide[i]=RightSide[i]^self.functionValue(LeftSide[i],key[j])
+                k+=1
+        return [LeftSide,RightSide]
+    
     def SBlock(self):
         pass
 
@@ -69,8 +72,12 @@ print(len(Des.str2hex(textToBlock64[0]).decode("UTF-8")))
 aa=Des.Block64ToTwoBlockOf32(textToBlock64[0])
 
 aa=Des.AllBlock64To32Blocks()
-print("dsf",len(aa))
+
+
+#print("dsf",len(aa))
 print(Des.hex2str(aa[0][0]).decode("UTF-8"))
 print(Des.hex2str(aa[0][1]).decode("UTF-8"))
 print(len(Des.hex2str(aa[0][1]).decode("UTF-8")))
-print(Des.generateKey())
+print(Des.generateKey()[0][1])
+print()
+print(Des.roundText(Des.hex2str(aa[0][0]).decode("UTF-8"),Des.generateKey()[0][0]))
