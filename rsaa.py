@@ -2,7 +2,7 @@
 from random import randint
 import math
 import sys
-Limit=10000000
+Limit=1000
 #Генерации Алфабета для нахождения хзша
 def alpha():
     alphabet = [''] + [chr(i) for i in range(ord('а'),ord('я')+1)] + [' ']
@@ -40,6 +40,7 @@ def genertePQ():
     
     p=generatePrimNumber(randint(0,Limit))
     q=generatePrimNumber(randint(0,Limit))
+    
 
     return p,q
 #Генерации ключей 
@@ -71,11 +72,25 @@ def encryptRSA(text,E,N):
    
     return textCipher
 #Вычисление хэш
+def hashMessageBob(text,E,N):
+    textToInt=[ord(c)%32 for c in text]
+    h=0
+    #(M**E)%N
+    for c in textToInt:
+        h+=(((h+c)**2)%11)
+    M=h
+
+    
+    return h,pow(M,E,N)
+def hashMessageAlice(S,D,N):
+    return (S**D)%N
 def generateHash(text,N):
     h=0
+    textCipher=""
     for i in range(len(text)):
         h=((h+alpha().index(text[i]))**2)%N
-    return h
+        textCipher+=alpha()[h%32]
+    return textCipher
 #Расшифровка сообщения 
 def descriptRSA(text,D,N):
     textOpen=""
@@ -97,13 +112,21 @@ def formatText(fileName):
 
 #print(genertePQ())
 text=formatText("C:/Users/camar/OneDrive/Desktop/Master/Crypto/Crypto-master/Crypto-master/text.txt")
-
-print("Исходный текст\n",text)
 keys=generateKeys()
-print("Открытый ключ {} закрытый ключ {} p= {} q={} N={}".format(keys[3],keys[2],
-keys[4],keys[5],keys[0]))
+print("Открытый ключ E {} D закрытый ключ {} N={}".format(keys[3],keys[2],
+keys[0]))
+
+'''print("Исходный текст\n",text)
+
+
 encrypt=encryptRSA(text,keys[3],keys[0])
-print("Шифро-сообщения\n",encrypt)
-print("Сгенерированный хэш\n",generateHash(text,keys[0]))
+#print("Шифро-сообщения\n",encrypt)
+N=11
+print(" Хэш поговорки\n",generateHash(text,11))
+print(" Хэш поговорки\n",len(generateHash(text,keys[0])))
 descrypt=descriptRSA(encrypt,keys[2],keys[0])
-print("Расшифрока сообщения\n",descrypt)
+#print("Расшифрока сообщения\n",descrypt) '''
+hashh=hashMessageBob(text,keys[3],keys[0])
+print("Text hash ",hashh[0])
+print("Encrypted hash ",hashh[1])
+print("Decrypted hash ",hashMessageAlice(hashh[1],keys[2],keys[0]))
