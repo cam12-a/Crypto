@@ -1,0 +1,29 @@
+data=open('/content/text.txt','r+').read()
+out=""
+newData=data.split("\n")
+newData=newData[:len(newData)-1]
+bits=[["0"*int(d[2]) if d[0]=='0' else "1"*int(d[2]) for d in p.split('+')] for p in newData]
+bit=[0 for i in range(len(newData))]
+
+for i in range(len(newData)):
+  out=''.join(bits[i][:])
+  bit[i]=out
+print(bit)
+from PIL import Image
+
+width, height = len(bit[0]), len(bit)
+
+pic = Image.new('RGB', (width, height))
+pix = pic.load()
+
+for i in range(height):
+	for j in range(width):
+		 pix[j,i] = ( bit[i][j]=='0' and (255,255,255) or (0,0,0) )
+
+pic.save('pixel.png')
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+img=mpimg.imread('/content/pixel.png')
+imgplot = plt.imshow(img)
+
